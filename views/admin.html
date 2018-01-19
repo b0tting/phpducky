@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Boss page</title>
+    <script src="{{ @baseuri }}/jquery.min.js" language="JavaScript"></script>
+</head>
+<body>
+    <p>Current</p>
+    <table>
+        <thead>
+        <repeat group="{{ @headers}}" value="{{ @head}}">
+            <th>{{@head}}</th>
+        </repeat>
+        </thead>
+        <repeat group="{{ @all }}" value="{{ @target }}">
+            <tr>
+                <repeat group="{{ @target}}" key="{{ @column }}" value="{{ @value }}">
+                    <td>{{ @value }}</td>
+                </repeat>
+            </tr>
+        </repeat>
+    </table>
+</body>
+</html>
