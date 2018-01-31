@@ -3,23 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>Boss page</title>
-    <script src="{{ @baseuri }}/jquery.min.js" language="JavaScript"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jq-3.2.1/dt-1.10.16/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
 </head>
-<body>
-    <p>Current</p>
-    <table>
-        <thead>
-        <repeat group="{{ @headers}}" value="{{ @head}}">
-            <th>{{@head}}</th>
-        </repeat>
-        </thead>
-        <repeat group="{{ @all }}" value="{{ @target }}">
-            <tr>
-                <repeat group="{{ @target}}" key="{{ @column }}" value="{{ @value }}">
-                    <td>{{ @value }}</td>
+<body class="bg-light">
+
+<header class="hdr">
+    <img class="hdr-bg" src="https://www.qualogy.com/public/images/hdr-bg.svg" alt="" width="1920" height="100">
+</header>
+
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>BADUSB Results page</h2>
+        <p class="lead">The results of the BADUSB campaign can be found below. Targets are identified as unique by the combination of PC name, username and ducky IDs. You can find a CSV version of the results <a href="boss/csv">here</a>.</p>
+    </div>
+
+    <div class="py-5 text-center">
+        <table id="results">
+            <thead>
+                <tr>
+                    <repeat group="{{ @headers}}" value="{{ @head}}">
+                        <th>{{@head}}</th>
+                    </repeat>
+                </tr>
+            </thead>
+            <tbody>
+                <repeat group="{{ @all }}" value="{{ @target }}">
+                    <tr>
+                        <repeat group="{{ @target}}" key="{{ @column }}" value="{{ @value }}">
+                            <td>{{ @value }}</td>
+                        </repeat>
+                    </tr>
                 </repeat>
-            </tr>
-        </repeat>
-    </table>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script language="JavaScript">
+    $(document).ready(function(){
+        $('#results').DataTable();
+    });
+</script>
 </body>
 </html>

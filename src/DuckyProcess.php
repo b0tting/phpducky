@@ -11,8 +11,8 @@ include("DuckyDao.php");
 class DuckyProcess extends \Prefab
 {
     //0 is ducky ident
-    const DUCKY_PCNAME_LOCATION = 1;
-    const DUCKY_USERNAME_LOCATION = 2;
+    const DUCKY_PCNAME_LOCATION = 2;
+    const DUCKY_USERNAME_LOCATION = 1;
     const DUCKY_IPADDRESS_LOCATION = 3;
     const DUCKY_ID_LOCATION = 0;
 
@@ -30,6 +30,24 @@ class DuckyProcess extends \Prefab
 
     }
 
+    function getReverseLookup() {
+        if ($_SERVER["HTTP_X_FORWARDED_FOR"] != ""){
+            $IP = $_SERVER["HTTP_X_FORWARDED_FOR"];
+            $proxy = $_SERVER["REMOTE_ADDR"];
+            $host = @gethostbyaddr($_SERVER["HTTP_X_FORWARDED_FOR"]);
+        }else{
+            $IP = $_SERVER["REMOTE_ADDR"];
+            $host = @gethostbyaddr($_SERVER["REMOTE_ADDR"]);
+        }
+
+        if(! $host) {
+            $host = $IP;
+        }
+        return $host;
+
+    }
+
+
     function incomingDucky($encoded, $ip) {
         try {
             $this->logger->write( "Incoming ducky at " . $encoded, 'r');
@@ -40,14 +58,25 @@ class DuckyProcess extends \Prefab
                 $this->logger->write("Succesful decode to " . $decoded, 'r');
                 $duckystruct = explode(";", $decoded);
 
-                $this->dao->receiveNewDucky(
+                if($this->dao->hasDucky($duckystruct[DuckyProcess::DUCKY_USERNAME_LOCATION],
+                    $duckystruct[DuckyProcess::DUCKY_ID_LOCATION],
+                    $duckystruct[DuckyProcess::DUCKY_PCNAME_LOCATION])) {
+                    $this->dao->updateDucky($duckystruct[DuckyProcess::DUCKY_USERNAME_LOCATION],
+                        $duckystruct[DuckyProcess::DUCKY_ID_LOCATION],
+                        $duckystruct[DuckyProcess::DUCKY_PCNAME_LOCATION]);
+                    $this->logger->write( "Succesful update of ducky " . $duckystruct[DuckyProcess::DUCKY_ID_LOCATION], 'r');
+                } else {
+                    $this->dao->receiveNewDucky(
                         $duckystruct[DuckyProcess::DUCKY_USERNAME_LOCATION],
                         $duckystruct[DuckyProcess::DUCKY_ID_LOCATION],
                         $duckystruct[DuckyProcess::DUCKY_PCNAME_LOCATION],
                         $duckystruct[DuckyProcess::DUCKY_IPADDRESS_LOCATION],
-                        $ip
+                        $ip,
+                        $this->getReverseLookup()
                     );
-                $this->logger->write( "Succesful parse of ducky " . $duckystruct[DuckyProcess::DUCKY_ID_LOCATION], 'r');
+                    $this->logger->write( "Succesful save of ducky " . $duckystruct[DuckyProcess::DUCKY_ID_LOCATION], 'r');
+                }
+
             } else {
                 $this->logger->write( "B64 decode bad result for duckystring " . $encoded . ", got " . $decoded, 'r');
             }
@@ -55,5 +84,25 @@ class DuckyProcess extends \Prefab
             $this->logger->write( "Error parsing duckystring " . $encoded, 'r');
             $this->logger->write($e->getMessage());
         }
+    }
+
+    function csvReport() {
+        $all =  $this->dao->gotDuckyOverview();
+        $csv = "";
+        $headers = false;
+        foreach($all as $entry) {
+            if(!$headers) {
+                foreach(array_keys($entry) as $column) {
+                    $csv .= $column . ";";
+                }
+                $csv .= "\n";
+                $headers = true;
+            }
+            foreach($entry as $column) {
+                $csv .= $column . ";";
+            }
+            $csv .= "\n";
+        }
+        return $csv;
     }
 }

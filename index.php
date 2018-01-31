@@ -25,5 +25,15 @@ $f3->route('GET @boss: /boss',
     }
 );
 
+$f3->route('GET /boss/csv',
+    function($f3) {
+        header("Cache-Control: must-revalidate");
+        header("Content-type: application/vnd.ms-excel");
+        header("Content-disposition: attachment; filename=\"qaulogy_badusb.csv\"");
+        $csv  = DuckyProcess::instance()->csvReport();
+        print($csv);
+    }
+);
+
 
 $f3->run();
